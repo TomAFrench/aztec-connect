@@ -1,7 +1,0 @@
-export enum IframeEvent {
-  READY = 'READY',
-  NEW_VERSION_LOADED = 'NEW_VERSION_LOADED',
-  OPEN = 'OPEN',
-  CLOSE = 'CLOSE',
-  DESTROYED = 'DESTROYED',
-}

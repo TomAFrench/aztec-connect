@@ -1,1 +1,0 @@
-aztec_connect_module(rollup_proofs_root_rollup rollup_proofs_tx_rollup)
