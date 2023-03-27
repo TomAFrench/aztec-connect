@@ -29,15 +29,6 @@ export default {
   plugins: [
     new webpack.DefinePlugin({ 'process.env.NODE_DEBUG': false }),
     new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'] }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          // Point directly to the built file, not the symlink, else copy-on-change doesn't work...
-          from: `../../aztec-connect-cpp/build-wasm/bin/aztec-connect.wasm`,
-          to: 'wasm/aztec-connect.wasm',
-        },
-      ],
-    }),
   ],
   resolve: {
     alias: {

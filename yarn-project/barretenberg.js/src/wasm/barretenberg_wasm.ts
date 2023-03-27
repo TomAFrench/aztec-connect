@@ -17,9 +17,9 @@ EventEmitter.defaultMaxListeners = 30;
 export async function fetchCode() {
   if (isNode) {
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    return await readFile(__dirname + '/aztec-connect.wasm');
+    return await readFile(__dirname + '/barretenberg.wasm');
   } else {
-    const res = await fetch('/aztec-connect.wasm');
+    const res = await fetch('/barretenberg.wasm');
     return Buffer.from(await res.arrayBuffer());
   }
 }
