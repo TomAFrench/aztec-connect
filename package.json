@@ -86,7 +86,6 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
-    "@aztec/eslint-config": "workspace:^",
     "@jest/globals": "^28.1.1",
     "@jest/types": "^28.1.3",
     "@rushstack/eslint-patch": "^1.1.4",
