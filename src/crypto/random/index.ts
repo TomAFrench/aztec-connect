@@ -6,8 +6,9 @@ import nodeCrypto from 'crypto';
 const MAX_BYTES = 65536;
 
 const getWebCrypto = () => {
-  if (typeof window !== 'undefined' && window.crypto) return window.crypto;
-  if (typeof self !== 'undefined' && self.crypto) return self.crypto;
+  // Test self first to avoid `ReferenceError : window is not defined` while executing in WebWorker
+  if (typeof self !== "undefined" && self.crypto) return self.crypto;
+  if (typeof window !== "undefined" && window.crypto) return window.crypto;
   return undefined;
 };
 

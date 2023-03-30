@@ -3,7 +3,7 @@ import { createDispatchProxy, DispatchMsg, TransportClient, WorkerConnector } fr
 import { BarretenbergWorker } from '../barretenberg_worker.js';
 
 export async function createWebWorker() {
-  const worker = new Worker(`/web_worker.js`);
+  const worker = new Worker(new URL(`web_worker.js`, import.meta.url));
   const transportConnect = new WorkerConnector(worker);
   const transportClient = new TransportClient<DispatchMsg>(transportConnect);
   await transportClient.open();

@@ -12,19 +12,33 @@ const require = createRequire(import.meta.url);
 
 export default {
   target: 'web',
-  mode: 'development',
-  entry: './src/wasm/browser/web_worker.ts',
+  mode: 'production',
+  entry: './src/index.ts',
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: [{ loader: 'ts-loader', options: { transpileOnly: true, onlyCompileBundledFiles: true } }],
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: 'tsconfig.dest.json',
+            },
+          },
+        ],
       },
     ],
   },
   output: {
     path: resolve(dirname(fileURLToPath(import.meta.url)), './dest'),
-    filename: 'wasm/browser/web_worker.js',
+    filename: '[name].js',
+    library: {
+      type: 'module',
+    },
+    chunkFormat: 'module',
+  },
+  experiments: {
+    outputModule: true,
   },
   plugins: [
     new webpack.DefinePlugin({ 'process.env.NODE_DEBUG': false }),
@@ -39,6 +53,7 @@ export default {
       fs: false,
       path: false,
       url: false,
+      "fs/promises": false,
       events: require.resolve('events/'),
       util: require.resolve('util/'),
       buffer: require.resolve('buffer/'),

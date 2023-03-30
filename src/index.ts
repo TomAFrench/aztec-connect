@@ -1,3 +1,4 @@
+import './buffer.js';
 import { Crs } from './crs/index.js';
 import { PooledFft } from './fft/index.js';
 import { PooledPippenger } from './pippenger/index.js';

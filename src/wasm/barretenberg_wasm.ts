@@ -6,11 +6,12 @@ import { randomBytes } from '../crypto/index.js';
 import { MemoryFifo } from '../fifo/index.js';
 import { fetch } from 'cross-fetch';
 import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, URL } from 'url';
 import { NodeDataStore } from './node/index.js';
 import { WebDataStore } from './browser/index.js';
 import { numToUInt32LE } from '../serialize/free_funcs.js';
 import { AsyncCallState, AsyncFnState } from './async_call_state.js';
+import { Crs } from '../crs/index.js';
 
 EventEmitter.defaultMaxListeners = 30;
 
@@ -19,7 +20,7 @@ export async function fetchCode() {
     const __dirname = dirname(fileURLToPath(import.meta.url));
     return await readFile(__dirname + '/barretenberg.wasm');
   } else {
-    const res = await fetch('/barretenberg.wasm');
+    const res = await fetch(new URL("barretenberg.wasm", import.meta.url));
     return Buffer.from(await res.arrayBuffer());
   }
 }
@@ -49,10 +50,9 @@ export class BarretenbergWasm extends EventEmitter {
    * 20 pages by default. 20*2**16 > 1mb stack size plus other overheads.
    * 8192 maximum by default. 512mb.
    */
-  public async init(module?: WebAssembly.Module, initial = 20, maximum = 8192) {
+  public async init(module?: WebAssembly.Module, initial = 256, maximum = 65536) {
     this.debug(
-      `initial mem: ${initial} pages, ${(initial * 2 ** 16) / (1024 * 1024)}mb. max mem: ${maximum} pages, ${
-        (maximum * 2 ** 16) / (1024 * 1024)
+      `initial mem: ${initial} pages, ${(initial * 2 ** 16) / (1024 * 1024)}mb. max mem: ${maximum} pages, ${(maximum * 2 ** 16) / (1024 * 1024)
       }mb`,
     );
     this.memory = new WebAssembly.Memory({ initial, maximum });
@@ -178,6 +178,24 @@ export class BarretenbergWasm extends EventEmitter {
             }
           },
         ),
+        env_load_verifier_crs: this.asyncCallState.wrapImportFn(
+          (state: AsyncFnState, keyAddr: number, dataAddr: number, dataLength: number) => {
+            // TODO optimize
+            // const crs = new Crs(0);
+            // await crs.init();
+            // const crsPtr = wasm.call('bbmalloc', crs.getG2Data().length);
+            // wasm.writeMemory(crsPtr, crs.getG2Data());
+            // return crsPtr;
+          }),
+        // eslint-disable-next-line camelcase
+        env_load_prover_crs: this.asyncCallState.wrapImportFn(
+          (state: AsyncFnState, keyAddr: number, dataAddr: number, dataLength: number) => {
+            // const crs = new Crs(numPoints);
+            // await crs.init();
+            // const crsPtr = wasm.call('bbmalloc', crs.getG1Data().length);
+            // wasm.writeMemory(crsPtr, crs.getG1Data());
+            // return crsPtr;
+          }),
         memory: this.memory,
       },
     };

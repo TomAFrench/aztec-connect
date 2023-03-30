@@ -10,6 +10,8 @@ webpack watch --config webpack.config.prod.js &
 
 # Kick off building ./src/wasm/node_worker.js.
 # Needed for unit tests until node 18 + yarn pnp + ts-node chained loader stuff works.
-webpack watch --config webpack.config.dev.js &
+# webpack watch --config webpack.config.dev.js &
+
+# webpack watch --config webpack.config.js &
 
 wait
