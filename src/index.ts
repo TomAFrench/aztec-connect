@@ -70,7 +70,7 @@ async function getCircuitSize(wasm: BarretenbergWasm, constraintSystem: Uint8Arr
   const mem = await worker.call('bbmalloc', buf.length);
   await worker.transferToHeap(buf, mem);
 
-  const circSize = await worker.call('standard_example__get_circuit_size', mem);
+  const circSize = await worker.call('turbo_get_exact_circuit_size', mem);
   // FFT requires the circuit size to be a power of two.
   // If it is not, then we round it up to the nearest power of two
   return pow2ceil(circSize);

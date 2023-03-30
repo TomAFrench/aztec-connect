@@ -7,7 +7,7 @@ import { MemoryFifo } from '../fifo/index.js';
 import { fetch } from 'cross-fetch';
 import { dirname } from 'path';
 import { fileURLToPath, URL } from 'url';
-import { NodeDataStore } from './node/index.js';
+// import { NodeDataStore } from './node/index.js';
 import { WebDataStore } from './browser/index.js';
 import { numToUInt32LE } from '../serialize/free_funcs.js';
 import { AsyncCallState, AsyncFnState } from './async_call_state.js';
@@ -26,7 +26,7 @@ export async function fetchCode() {
 }
 
 export class BarretenbergWasm extends EventEmitter {
-  private store = isNode ? new NodeDataStore() : new WebDataStore();
+  private store = new WebDataStore();
   private memory!: WebAssembly.Memory;
   private heap!: Uint8Array;
   private instance!: WebAssembly.Instance;

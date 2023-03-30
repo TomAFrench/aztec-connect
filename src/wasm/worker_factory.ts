@@ -1,10 +1,10 @@
 import { createDebugLogger } from '../log/index.js';
-import { createNodeWorker } from './node/index.js';
+// import { createNodeWorker } from './node/index.js';
 import { createWebWorker } from './browser/index.js';
 import isNode from 'detect-node';
 
 export async function createWorker(id?: string, module?: WebAssembly.Module, initialMem?: number, maxMem?: number) {
-  const worker = await (isNode ? createNodeWorker() : createWebWorker());
+  const worker = await createWebWorker();
   const logger = createDebugLogger(id ? `bb:wasm:${id}` : 'bb:wasm');
   void worker.on('log', msg => logger(msg));
   try {
