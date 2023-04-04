@@ -30,6 +30,7 @@ export class TurboProver {
       this.pippenger.getPointer(),
       g2DataPointer,
       provingKeyPtr,
+      constraintSystemPtr,
       witnessPtr,
     );
 
