@@ -4,11 +4,11 @@ import { PooledFft } from './fft/index.js';
 import { PooledPippenger } from './pippenger/index.js';
 import { BarretenbergWasm, WorkerPool } from './wasm/index.js';
 import { Prover } from './client_proofs/index.js';
-import { TurboProver } from './turbo_prover.js';
-import { TurboVerifier } from './turbo_verifier.js';
+import { UltraProver } from './ultra_prover.js';
+import { UltraVerifier } from './ultra_verifier.js';
 
-export * from './turbo_prover.js';
-export * from './turbo_verifier.js';
+export * from './ultra_prover.js';
+export * from './ultra_verifier.js';
 
 /**
  * Takes in a serialized `standard_format` Barretenberg circuit and returns a prover/verifier for this circuit.
@@ -19,11 +19,11 @@ export * from './turbo_verifier.js';
  * @param serializedCircuit - The serialized Barretenberg circuit for which we want to prove against
  * @returns A tuple of a prover and verifier for the `serializedCircuit`.
  */
-export async function setupTurboProverAndVerifier(
+export async function setupUltraProverAndVerifier(
   serializedCircuit: Uint8Array,
   provingKey: Uint8Array,
   verificationKey: Uint8Array,
-): Promise<[TurboProver, TurboVerifier]> {
+): Promise<[UltraProver, UltraVerifier]> {
   const barretenberg = await BarretenbergWasm.new();
 
   const circSize = await getCircuitSize(barretenberg, serializedCircuit);
@@ -44,10 +44,10 @@ export async function setupTurboProverAndVerifier(
 
   const prover = new Prover(workerPool.workers[0], pippenger, fft);
 
-  const turboProver = new TurboProver(prover, g2Data, provingKey, serializedCircuit, pippenger.pool[0]);
-  const turboVerifier = new TurboVerifier(workerPool.workers[0], g2Data, verificationKey, serializedCircuit);
+  const ultraProver = new UltraProver(prover, g2Data, provingKey, serializedCircuit, pippenger.pool[0]);
+  const ultraVerifier = new UltraVerifier(workerPool.workers[0], g2Data, verificationKey, serializedCircuit);
 
-  return Promise.all([turboProver, turboVerifier]);
+  return Promise.all([ultraProver, ultraVerifier]);
 }
 
 async function loadCrs(circSize: number): Promise<Crs> {
@@ -70,20 +70,20 @@ async function getCircuitSize(wasm: BarretenbergWasm, constraintSystem: Uint8Arr
   const mem = await worker.call('bbmalloc', buf.length);
   await worker.transferToHeap(buf, mem);
 
-  const circSize = await worker.call('turbo_get_exact_circuit_size', mem);
+  const circSize = await worker.call('acir_proofs_get_exact_circuit_size', mem);
   // FFT requires the circuit size to be a power of two.
   // If it is not, then we round it up to the nearest power of two
   return pow2ceil(circSize);
 }
 
-export async function createProof(prover: TurboProver, witnessArr: Uint8Array): Promise<Uint8Array> {
+export async function createProof(prover: UltraProver, witnessArr: Uint8Array): Promise<Uint8Array> {
   // computes the proof
   const proof = await prover.createProof(witnessArr);
 
   return proof;
 }
 
-export async function verifyProof(verifier: TurboVerifier, proof: Buffer): Promise<boolean> {
+export async function verifyProof(verifier: UltraVerifier, proof: Buffer): Promise<boolean> {
   const verified = await verifier.verifyProof(proof);
   return verified;
 }

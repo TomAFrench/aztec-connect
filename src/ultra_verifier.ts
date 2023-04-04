@@ -1,6 +1,6 @@
 import { BarretenbergWorker } from './wasm/index.js';
 
-export class TurboVerifier {
+export class UltraVerifier {
 
   constructor(private worker: BarretenbergWorker, private g2Data: Uint8Array, private verificationKey: Uint8Array, private constraintSystem: Uint8Array){}
 
@@ -17,7 +17,7 @@ export class TurboVerifier {
     const proofPtr = await this.worker.call('bbmalloc', proof.length);
     await this.worker.transferToHeap(proof, proofPtr);
 
-    const verified = (await this.worker.call('turbo_verify_proof', g2DataPointer, verificationKeyPtr, constraintSystemPtr, proofPtr, proof.length)) ? true : false;
+    const verified = (await this.worker.call('acir_proofs_verify_proof', g2DataPointer, verificationKeyPtr, constraintSystemPtr, proofPtr, proof.length)) ? true : false;
     await this.worker.call('bbfree', proofPtr);
     return verified;
   }

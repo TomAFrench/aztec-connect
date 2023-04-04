@@ -1,7 +1,7 @@
 import { Prover } from './client_proofs/index.js';
 import { SinglePippenger } from './pippenger/index.js';
 
-export class TurboProver {
+export class UltraProver {
   constructor(
     private prover: Prover,
     private g2Data: Uint8Array,
@@ -26,7 +26,7 @@ export class TurboProver {
     await worker.transferToHeap(witnessArr, witnessPtr);
 
     const proverPtr = await worker.call(
-      'turbo_new_prover',
+      'acir_proofs_new_prover',
       this.pippenger.getPointer(),
       g2DataPointer,
       provingKeyPtr,
@@ -36,7 +36,7 @@ export class TurboProver {
 
     const proof = await this.prover.createProof(proverPtr);
 
-    await worker.call('turbo_delete_prover', proverPtr);
+    await worker.call('acir_proofs_delete_prover', proverPtr);
     return proof;
   }
 
